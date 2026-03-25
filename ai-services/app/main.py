@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.sign import router as sign_router
 from app.api.stt import router as stt_router
 from app.api.tts import router as tts_router
 
@@ -16,6 +17,7 @@ app.add_middleware(
 
 app.include_router(stt_router)
 app.include_router(tts_router)
+app.include_router(sign_router)
 
 
 @app.get('/health')

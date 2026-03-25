@@ -1,6 +1,8 @@
 import { aiApi } from '../services/api';
+import { useTranslation } from 'react-i18next';
 
 export default function MicRecorder({ recorder, onTranscript, sessionId }) {
+  const { t } = useTranslation();
   const handleTranscribe = async () => {
     if (!recorder.audioBlob) return;
 
@@ -15,21 +17,21 @@ export default function MicRecorder({ recorder, onTranscript, sessionId }) {
 
   return (
     <section className="rounded-2xl bg-white/90 p-4 shadow-xl">
-      <h2 className="font-heading text-xl font-bold text-slate-900">Microphone</h2>
+      <h2 className="font-heading text-xl font-bold text-slate-900">{t('microphone')}</h2>
       <div className="mt-3 flex flex-wrap gap-3">
         {!recorder.isRecording ? (
           <button
             className="rounded-lg bg-mint px-5 py-3 text-lg font-semibold text-white"
             onClick={recorder.startRecording}
           >
-            Start Recording
+            {t('startRecording')}
           </button>
         ) : (
           <button
             className="rounded-lg bg-rose px-5 py-3 text-lg font-semibold text-white"
             onClick={recorder.stopRecording}
           >
-            Stop Recording
+            {t('stopRecording')}
           </button>
         )}
         <button
@@ -37,7 +39,7 @@ export default function MicRecorder({ recorder, onTranscript, sessionId }) {
           disabled={!recorder.audioBlob || !sessionId}
           onClick={handleTranscribe}
         >
-          Transcribe
+          {t('transcribe')}
         </button>
       </div>
     </section>

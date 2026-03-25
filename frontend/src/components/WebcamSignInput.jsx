@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { aiApi } from '../services/api';
 
 export default function WebcamSignInput({ onDetectedText, sessionId }) {
+  const { t } = useTranslation();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [active, setActive] = useState(false);
@@ -46,20 +48,20 @@ export default function WebcamSignInput({ onDetectedText, sessionId }) {
 
   return (
     <section className="rounded-2xl bg-white/90 p-4 shadow-xl">
-      <h2 className="font-heading text-xl font-bold text-slate-900">Sign Detection</h2>
+      <h2 className="font-heading text-xl font-bold text-slate-900">{t('signDetection')}</h2>
       <div className="mt-3 flex flex-wrap gap-3">
         <button
           className="rounded-lg bg-amber px-5 py-3 text-lg font-semibold text-white"
           onClick={() => setActive((prev) => !prev)}
         >
-          {active ? 'Stop Webcam' : 'Start Webcam'}
+          {active ? t('stopWebcam') : t('startWebcam')}
         </button>
         <button
           className="rounded-lg bg-slate-800 px-5 py-3 text-lg font-semibold text-white disabled:opacity-40"
           disabled={!active || !sessionId}
           onClick={captureAndDetect}
         >
-          Detect Gesture
+          {t('detectGesture')}
         </button>
       </div>
       <div className="mt-4 overflow-hidden rounded-xl border border-slate-300 bg-black/90">

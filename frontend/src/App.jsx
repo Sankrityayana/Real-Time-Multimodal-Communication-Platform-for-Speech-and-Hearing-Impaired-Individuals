@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ChatPanel from './components/ChatPanel';
 import MicRecorder from './components/MicRecorder';
 import WebcamSignInput from './components/WebcamSignInput';
 import LiveTranscript from './components/LiveTranscript';
 import MessageComposer from './components/MessageComposer';
 import AudioPlayer from './components/AudioPlayer';
+import LanguageSwitcher from './components/LanguageSwitcher';
 import { authApi, chatApi, setAuthToken } from './services/api';
 import { createChatSocket } from './services/socket';
 import { useAudioRecorder } from './hooks/useAudioRecorder';
@@ -16,6 +18,7 @@ const DEFAULT_CREDENTIALS = {
 };
 
 export default function App() {
+  const { t } = useTranslation();
   const [token, setToken] = useState('');
   const [messages, setMessages] = useState([]);
   const [transcript, setTranscript] = useState('');
@@ -85,12 +88,13 @@ export default function App() {
     <main className="mx-auto max-w-7xl p-4 sm:p-8">
       <header className="rounded-3xl bg-slateblue p-6 text-white shadow-2xl">
         <h1 className="font-heading text-3xl font-bold sm:text-5xl">
-          Real-Time Multimodal Communication Platform
+          {t('title')}
         </h1>
         <p className="mt-2 text-lg sm:text-2xl">
-          Accessible communication across speech, text, and sign language.
+          {t('subtitle')}
         </p>
         <p className="mt-2 text-sm sm:text-base">Session: {sessionId || 'initializing...'}</p>
+        <LanguageSwitcher />
       </header>
 
       <section className="mt-6 grid gap-6 lg:grid-cols-2">

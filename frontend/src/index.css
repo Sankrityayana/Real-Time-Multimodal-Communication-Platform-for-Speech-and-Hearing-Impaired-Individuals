@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-1: #eef6ff;
+  --bg-2: #fff7ed;
+  --ink: #0f172a;
+  --card: rgba(255, 255, 255, 0.92);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: 'Manrope', sans-serif;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.15), transparent 40%),
+    radial-gradient(circle at 80% 10%, rgba(245, 158, 11, 0.18), transparent 35%),
+    linear-gradient(140deg, var(--bg-1), var(--bg-2));
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid #0ea5e9;
+  outline-offset: 2px;
+}

@@ -2,9 +2,9 @@
 
 ## Redis Channel Layer
 
-- Backed by `channels_redis` with shared Redis endpoint.
-- Tuned channel capacity and message expiry for bursty realtime traffic.
-- Supports horizontal scale by running multiple Daphne workers.
+- Optional: use `channels_redis` with shared Redis endpoint for multi-instance deployments.
+- Local/default mode uses in-memory channel layer and does not need Redis.
+- Redis mode supports horizontal scale by running multiple Daphne workers.
 
 ## Realtime Scale Pattern
 

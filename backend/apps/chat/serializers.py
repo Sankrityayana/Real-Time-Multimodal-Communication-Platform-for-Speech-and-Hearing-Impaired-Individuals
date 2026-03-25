@@ -7,6 +7,7 @@ class SessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Session
         fields = ['id', 'room_name', 'created_at', 'is_active']
+        read_only_fields = ['id', 'room_name', 'created_at', 'is_active']
 
 
 class MessageSerializer(serializers.ModelSerializer):

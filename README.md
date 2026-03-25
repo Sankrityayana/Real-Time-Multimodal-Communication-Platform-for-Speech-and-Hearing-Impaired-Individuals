@@ -4,7 +4,7 @@ A production-ready full-stack platform enabling real-time communication through 
 
 ## Features
 
-- Real-time chat over WebSockets (Django Channels + Redis)
+- Real-time chat over WebSockets (Django Channels, Redis optional)
 - Speech-to-text (Whisper)
 - Text-to-speech (gTTS)
 - Sign gesture detection (OpenCV + MediaPipe)
@@ -126,7 +126,6 @@ Services:
 - Frontend: http://localhost:5173
 - Backend: http://localhost:8000
 - AI Services: http://localhost:8100
-- Redis: localhost:6379
 
 ## Core API Endpoints
 
@@ -159,6 +158,7 @@ Services:
 - DJANGO_DEBUG
 - DJANGO_ALLOWED_HOSTS
 - DATABASE_URL
+- USE_REDIS
 - REDIS_URL
 - CORS_ALLOWED_ORIGINS
 - AI_SERVICE_BASE_URL
@@ -178,7 +178,7 @@ Services:
 - Frontend: Vercel using frontend/vercel.json
 - Backend: Render/Railway using backend/render.yaml
 - AI Services: Render/Railway/Fly with uvicorn start command
-- Data: SQLite file + managed/local Redis
+- Data: SQLite file (Redis optional for horizontal scale)
 
 Detailed instructions: docs/deployment.md
 

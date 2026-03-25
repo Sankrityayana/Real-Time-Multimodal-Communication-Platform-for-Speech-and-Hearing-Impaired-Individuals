@@ -18,7 +18,7 @@ services:
       DJANGO_DEBUG: "False"
       DJANGO_SECRET_KEY: "change-me"
       DATABASE_URL: "sqlite:////data/db.sqlite3"
-      REDIS_URL: "redis://redis:6379/0"
+      USE_REDIS: "False"
       CORS_ALLOWED_ORIGINS: "http://localhost:5173"
       AI_SERVICE_BASE_URL: "http://ai-services:8100"
       DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,backend"
@@ -27,7 +27,6 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - redis
       - ai-services
 
   ai-services:
@@ -38,11 +37,6 @@ services:
       - ../ai-services/.env.example
     ports:
       - "8100:8100"
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
 
 volumes:
   backend_data:

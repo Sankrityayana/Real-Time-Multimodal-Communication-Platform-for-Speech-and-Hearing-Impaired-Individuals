@@ -9,7 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(
     DJANGO_DEBUG=(bool, False),
     DJANGO_ALLOWED_HOSTS=(list, ['localhost']),
-    CORS_ALLOWED_ORIGINS=(list, ['http://localhost:5173'])
+    CORS_ALLOWED_ORIGINS=(list, ['http://localhost:5173']),
+    USE_REDIS=(bool, False)
 )
 environ.Env.read_env(BASE_DIR / '.env')
 
@@ -71,16 +72,24 @@ DATABASES = {
 AUTH_USER_MODEL = 'accounts.User'
 
 REDIS_URL = env('REDIS_URL', default='redis://localhost:6379/0')
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [REDIS_URL],
-            'capacity': 1500,
-            'expiry': 20
+USE_REDIS = env('USE_REDIS')
+if USE_REDIS:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [REDIS_URL],
+                'capacity': 1500,
+                'expiry': 20
+            }
         }
     }
-}
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer'
+        }
+    }
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

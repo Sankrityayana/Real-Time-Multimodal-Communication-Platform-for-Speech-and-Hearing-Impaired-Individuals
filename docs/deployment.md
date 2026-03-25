@@ -21,7 +21,7 @@
    - `DJANGO_SECRET_KEY`
    - `DJANGO_DEBUG=False`
    - `DJANGO_ALLOWED_HOSTS=<backend-domain>`
-   - `DATABASE_URL=<cloud-postgres-url>`
+   - `DATABASE_URL=sqlite:///db.sqlite3`
    - `REDIS_URL=<cloud-redis-url>`
    - `CORS_ALLOWED_ORIGINS=https://<frontend-domain>`
    - `AI_SERVICE_BASE_URL=https://<ai-service-domain>`
@@ -37,7 +37,7 @@
 
 ## Managed Data Services
 
-- PostgreSQL: Use managed cloud instance.
+- SQLite: Persist `db.sqlite3` on attached disk/volume.
 - Redis: Use managed cloud Redis.
 
 ## Post Deploy Checks

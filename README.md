@@ -9,7 +9,7 @@ A production-ready full-stack platform enabling real-time communication through 
 - Text-to-speech (gTTS)
 - Sign gesture detection (OpenCV + MediaPipe)
 - JWT authentication
-- PostgreSQL persistence for users, sessions, and messages
+- SQLite persistence for users, sessions, and messages
 - PWA installability and basic offline cache
 - English + Hindi localization
 
@@ -126,7 +126,6 @@ Services:
 - Frontend: http://localhost:5173
 - Backend: http://localhost:8000
 - AI Services: http://localhost:8100
-- PostgreSQL: localhost:5432
 - Redis: localhost:6379
 
 ## Core API Endpoints
@@ -179,7 +178,7 @@ Services:
 - Frontend: Vercel using frontend/vercel.json
 - Backend: Render/Railway using backend/render.yaml
 - AI Services: Render/Railway/Fly with uvicorn start command
-- Data: Managed PostgreSQL and managed Redis
+- Data: SQLite file + managed/local Redis
 
 Detailed instructions: docs/deployment.md
 

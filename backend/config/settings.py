@@ -65,7 +65,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='postgresql://postgres:postgres@localhost:5432/multimodal')
+    'default': env.db('DATABASE_URL', default='sqlite:///db.sqlite3')
 }
 
 AUTH_USER_MODEL = 'accounts.User'

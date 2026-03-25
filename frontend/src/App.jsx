@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ChatPanel from './components/ChatPanel';
 import MicRecorder from './components/MicRecorder';
 import WebcamSignInput from './components/WebcamSignInput';
 import LiveTranscript from './components/LiveTranscript';
 import MessageComposer from './components/MessageComposer';
 import AudioPlayer from './components/AudioPlayer';
-import { authApi, setAuthToken } from './services/api';
+import { authApi, chatApi, setAuthToken } from './services/api';
 import { createChatSocket } from './services/socket';
 import { useAudioRecorder } from './hooks/useAudioRecorder';
 
@@ -19,7 +19,7 @@ export default function App() {
   const [token, setToken] = useState('');
   const [messages, setMessages] = useState([]);
   const [transcript, setTranscript] = useState('');
-  const sessionId = useMemo(() => crypto.randomUUID(), []);
+  const [sessionId, setSessionId] = useState('');
   const socketRef = useRef(null);
   const recorder = useAudioRecorder();
 
@@ -38,13 +38,16 @@ export default function App() {
 
       setToken(loginRes.data.access);
       setAuthToken(loginRes.data.access);
+
+      const sessionRes = await chatApi.createSession({});
+      setSessionId(sessionRes.data.id);
     };
 
     bootstrapAuth().catch((error) => console.error('Auth bootstrap failed', error));
   }, []);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || !sessionId) return;
 
     const socket = createChatSocket(sessionId, token, (payload) => {
       if (payload.type === 'message') {
@@ -72,12 +75,10 @@ export default function App() {
 
   const onTranscript = (text) => {
     setTranscript(text);
-    sendChatMessage(text, 'speech');
   };
 
   const onSignDetected = (text) => {
     setTranscript(text);
-    sendChatMessage(text, 'sign');
   };
 
   return (
@@ -89,11 +90,12 @@ export default function App() {
         <p className="mt-2 text-lg sm:text-2xl">
           Accessible communication across speech, text, and sign language.
         </p>
+        <p className="mt-2 text-sm sm:text-base">Session: {sessionId || 'initializing...'}</p>
       </header>
 
       <section className="mt-6 grid gap-6 lg:grid-cols-2">
-        <MicRecorder recorder={recorder} onTranscript={onTranscript} />
-        <WebcamSignInput onDetectedText={onSignDetected} />
+        <MicRecorder recorder={recorder} onTranscript={onTranscript} sessionId={sessionId} />
+        <WebcamSignInput onDetectedText={onSignDetected} sessionId={sessionId} />
         <LiveTranscript transcript={transcript} />
         <AudioPlayer text={messages[messages.length - 1]?.content || transcript} />
       </section>

@@ -1,11 +1,15 @@
 from django.conf import settings
 from django.http import HttpResponse
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from rest_framework import permissions, status
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import requests
 
+from apps.chat.models import Message, Session
+from apps.chat.serializers import MessageSerializer
 from .serializers import SignPayloadSerializer, TextPayloadSerializer
 
 
@@ -18,12 +22,46 @@ class TranscribeAudioView(APIView):
             return Response({'detail': 'file is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         file = request.FILES['file']
+        session_id = request.data.get('session_id')
         response = requests.post(
             f'{settings.AI_SERVICE_BASE_URL}/stt/transcribe',
             files={'file': (file.name, file.read(), file.content_type or 'audio/webm')},
             timeout=30
         )
-        return Response(response.json(), status=response.status_code)
+
+        data = response.json()
+        text = data.get('text', '').strip()
+        if text and session_id:
+            self._save_and_broadcast(session_id, request.user.id, text, 'speech')
+
+        return Response(data, status=response.status_code)
+
+    def _save_and_broadcast(self, session_id, user_id, content, modality):
+        try:
+            session = Session.objects.get(id=session_id, created_by_id=user_id, is_active=True)
+        except Session.DoesNotExist:
+            return
+
+        message = Message.objects.create(
+            session=session,
+            sender_id=user_id,
+            content=content,
+            modality=modality
+        )
+
+        payload = {
+            'type': 'message',
+            'data': MessageSerializer(message).data
+        }
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'chat_{session_id}',
+            {
+                'type': 'chat.message',
+                'payload': payload
+            }
+        )
 
 
 class TextToSpeechView(APIView):
@@ -55,4 +93,37 @@ class DetectSignView(APIView):
             timeout=30
         )
 
-        return Response(response.json(), status=response.status_code)
+        data = response.json()
+        text = data.get('detected_text', '').strip()
+        session_id = serializer.validated_data.get('session_id')
+        if text and session_id:
+            self._save_and_broadcast(session_id, request.user.id, text, 'sign')
+
+        return Response(data, status=response.status_code)
+
+    def _save_and_broadcast(self, session_id, user_id, content, modality):
+        try:
+            session = Session.objects.get(id=session_id, created_by_id=user_id, is_active=True)
+        except Session.DoesNotExist:
+            return
+
+        message = Message.objects.create(
+            session=session,
+            sender_id=user_id,
+            content=content,
+            modality=modality
+        )
+
+        payload = {
+            'type': 'message',
+            'data': MessageSerializer(message).data
+        }
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'chat_{session_id}',
+            {
+                'type': 'chat.message',
+                'payload': payload
+            }
+        )

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { aiApi } from '../services/api';
 
-export default function WebcamSignInput({ onDetectedText }) {
+export default function WebcamSignInput({ onDetectedText, sessionId }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [active, setActive] = useState(false);
@@ -37,7 +37,7 @@ export default function WebcamSignInput({ onDetectedText }) {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     const dataUrl = canvas.toDataURL('image/jpeg');
-    const response = await aiApi.detectSign({ image_base64: dataUrl });
+    const response = await aiApi.detectSign({ image_base64: dataUrl, session_id: sessionId });
 
     if (response.data.detected_text) {
       onDetectedText(response.data.detected_text);
@@ -56,7 +56,7 @@ export default function WebcamSignInput({ onDetectedText }) {
         </button>
         <button
           className="rounded-lg bg-slate-800 px-5 py-3 text-lg font-semibold text-white disabled:opacity-40"
-          disabled={!active}
+          disabled={!active || !sessionId}
           onClick={captureAndDetect}
         >
           Detect Gesture

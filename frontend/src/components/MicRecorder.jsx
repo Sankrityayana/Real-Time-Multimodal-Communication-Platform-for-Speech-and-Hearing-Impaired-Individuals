@@ -1,11 +1,12 @@
 import { aiApi } from '../services/api';
 
-export default function MicRecorder({ recorder, onTranscript }) {
+export default function MicRecorder({ recorder, onTranscript, sessionId }) {
   const handleTranscribe = async () => {
     if (!recorder.audioBlob) return;
 
     const formData = new FormData();
     formData.append('file', recorder.audioBlob, 'input.webm');
+    formData.append('session_id', sessionId);
 
     const response = await aiApi.transcribeAudio(formData);
     onTranscript(response.data.text);
@@ -33,7 +34,7 @@ export default function MicRecorder({ recorder, onTranscript }) {
         )}
         <button
           className="rounded-lg bg-slate-800 px-5 py-3 text-lg font-semibold text-white disabled:opacity-40"
-          disabled={!recorder.audioBlob}
+          disabled={!recorder.audioBlob || !sessionId}
           onClick={handleTranscribe}
         >
           Transcribe

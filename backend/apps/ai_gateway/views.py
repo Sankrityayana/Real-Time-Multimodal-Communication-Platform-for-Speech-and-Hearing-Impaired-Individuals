@@ -76,6 +76,11 @@ class TextToSpeechView(APIView):
             json=serializer.validated_data,
             timeout=30
         )
+        if response.status_code >= 400:
+            try:
+                return Response(response.json(), status=response.status_code)
+            except ValueError:
+                return Response({'detail': 'TTS service failed'}, status=response.status_code)
 
         return HttpResponse(response.content, content_type='audio/mpeg', status=response.status_code)
 

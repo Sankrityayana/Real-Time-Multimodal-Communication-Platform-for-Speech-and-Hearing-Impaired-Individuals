@@ -2,6 +2,8 @@ from urllib.parse import parse_qs
 
 from channels.db import database_sync_to_async
 from channels.middleware import BaseMiddleware
+from django.contrib.auth.models import AnonymousUser
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
@@ -16,9 +18,11 @@ class QueryStringJWTAuthMiddleware(BaseMiddleware):
     @database_sync_to_async
     def _get_user(self, token):
         if not token:
-            from django.contrib.auth.models import AnonymousUser
             return AnonymousUser()
 
         jwt_auth = JWTAuthentication()
-        validated = jwt_auth.get_validated_token(token)
-        return jwt_auth.get_user(validated)
+        try:
+            validated = jwt_auth.get_validated_token(token)
+            return jwt_auth.get_user(validated)
+        except (InvalidToken, TokenError):
+            return AnonymousUser()

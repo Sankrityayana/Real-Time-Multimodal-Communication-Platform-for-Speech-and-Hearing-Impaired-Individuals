@@ -23,13 +23,26 @@ class TranscribeAudioView(APIView):
 
         file = request.FILES['file']
         session_id = request.data.get('session_id')
-        response = requests.post(
-            f'{settings.AI_SERVICE_BASE_URL}/stt/transcribe',
-            files={'file': (file.name, file.read(), file.content_type or 'audio/webm')},
-            timeout=30
-        )
+        try:
+            response = requests.post(
+                f'{settings.AI_SERVICE_BASE_URL}/stt/transcribe',
+                files={'file': (file.name, file.read(), file.content_type or 'audio/webm')},
+                timeout=60
+            )
+        except requests.RequestException:
+            return Response(
+                {'detail': 'AI STT service unavailable. Ensure ai-services is running on port 8100.'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE
+            )
 
-        data = response.json()
+        try:
+            data = response.json()
+        except ValueError:
+            data = {'detail': 'Invalid response from AI STT service'}
+
+        if response.status_code >= 400:
+            return Response(data, status=response.status_code)
+
         text = data.get('text', '').strip()
         if text and session_id:
             self._save_and_broadcast(session_id, request.user.id, text, 'speech')

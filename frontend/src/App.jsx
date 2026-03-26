@@ -66,7 +66,11 @@ export default function App() {
     });
 
     socketRef.current = socket;
-    return () => socket.close();
+    return () => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.close();
+      }
+    };
   }, [sessionId, token]);
 
   const sendChatMessage = (content, modality = 'text') => {

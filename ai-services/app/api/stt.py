@@ -14,4 +14,9 @@ async def transcribe(file: UploadFile = File(...)):
     if not audio_bytes:
         raise HTTPException(status_code=400, detail='empty file')
 
-    return transcribe_audio_bytes(audio_bytes)
+    try:
+        return transcribe_audio_bytes(audio_bytes)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f'STT processing failed: {exc}') from exc

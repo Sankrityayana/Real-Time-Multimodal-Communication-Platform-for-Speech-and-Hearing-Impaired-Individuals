@@ -5,8 +5,8 @@ A production-ready full-stack platform enabling real-time communication through 
 ## Features
 
 - Real-time chat over WebSockets (Django Channels, Redis optional)
-- Speech-to-text (Whisper)
-- Text-to-speech (gTTS)
+- Speech-to-text (local Vosk)
+- Text-to-speech (local pyttsx3)
 - Sign gesture detection (OpenCV + MediaPipe)
 - JWT authentication
 - SQLite persistence for users, sessions, and messages
@@ -168,8 +168,7 @@ Services:
 ### AI Services (.env)
 
 - AI_SERVICE_PORT
-- OPENAI_API_KEY
-- WHISPER_MODEL_SIZE
+- STT_MODEL_PATH
 - TTS_PROVIDER
 - ENABLE_GPU
 

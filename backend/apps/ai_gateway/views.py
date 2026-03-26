@@ -82,7 +82,8 @@ class TextToSpeechView(APIView):
             except ValueError:
                 return Response({'detail': 'TTS service failed'}, status=response.status_code)
 
-        return HttpResponse(response.content, content_type='audio/mpeg', status=response.status_code)
+        content_type = response.headers.get('Content-Type', 'audio/wav')
+        return HttpResponse(response.content, content_type=content_type, status=response.status_code)
 
 
 class DetectSignView(APIView):

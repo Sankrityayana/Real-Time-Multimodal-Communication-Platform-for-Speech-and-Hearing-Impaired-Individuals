@@ -8,6 +8,7 @@ dist/
 .vite/
 frontend/node_modules/
 frontend/dist/
+frontend/.env
 
 # Python
 __pycache__/

@@ -28,16 +28,20 @@ export default function App() {
 
   useEffect(() => {
     const bootstrapAuth = async () => {
-      try {
-        await authApi.register(DEFAULT_CREDENTIALS);
-      } catch (error) {
-        // User may already exist; login still proceeds.
-      }
+      let loginRes;
 
-      const loginRes = await authApi.login({
-        email: DEFAULT_CREDENTIALS.email,
-        password: DEFAULT_CREDENTIALS.password
-      });
+      try {
+        loginRes = await authApi.login({
+          email: DEFAULT_CREDENTIALS.email,
+          password: DEFAULT_CREDENTIALS.password
+        });
+      } catch (error) {
+        await authApi.register(DEFAULT_CREDENTIALS);
+        loginRes = await authApi.login({
+          email: DEFAULT_CREDENTIALS.email,
+          password: DEFAULT_CREDENTIALS.password
+        });
+      }
 
       setToken(loginRes.data.access);
       setAuthToken(loginRes.data.access);
